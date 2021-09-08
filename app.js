@@ -2,6 +2,7 @@ const searchBtn = document.getElementById("search-btn");
 const searchField = document.getElementById("search");
 const imgAdd = document.getElementById("img-add");
 const warning = document.getElementById("warning");
+const sliderMakeSection = document.getElementById("slider-make-section");
 
 
 searchBtn.addEventListener("click", () => {
@@ -28,7 +29,16 @@ const fetchUrl = (inputValue) => {
         // console.log(url);
         fetch(url)
           .then((res) => res.json())
-          .then((data) => showImage(data.hits));
+            .then((data) => {
+                if (data.hits.length == 0) {
+                    warning.classList.remove("d-none");
+                    sliderMakeSection.classList.add("d-none");
+                } else {
+                    sliderMakeSection.classList.remove("d-none");
+                    showImage(data.hits);
+                }
+            });
+        
         searchField.value = "";
         imgAdd.textContent = "";
     }
