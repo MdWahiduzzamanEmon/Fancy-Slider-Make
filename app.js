@@ -3,22 +3,29 @@ const searchField = document.getElementById("search");
 const imgAdd = document.getElementById("img-add");
 const warning = document.getElementById("warning");
 const sliderMakeSection = document.getElementById("slider-make-section");
-
+const makeSliderButton = document.getElementById("makeSliderButton");
+const duration = document.getElementById("duration");
+const sliderDiv = document.getElementById("slider-div");
+const sliderImg = document.getElementById("slider-img");
+let img = [];
+var timer
 
 searchBtn.addEventListener("click", () => {
+  const inputValue = searchField.value;
+  // console.log(inputValue);
+    fetchUrl(inputValue);
+    clearInterval(timer)
+  
+});
+
+searchField.addEventListener("keyup", (event) => {
+  if (event.code == "Enter") {
     const inputValue = searchField.value;
     // console.log(inputValue);
-    fetchUrl(inputValue);
-
-})
-
-searchField.addEventListener('keyup', (event) => {
-    if (event.code == "Enter") {
-        const inputValue = searchField.value;
-        // console.log(inputValue);
-        fetchUrl(inputValue);
-    }
-})
+      fetchUrl(inputValue);
+      clearInterval(timer);
+  }
+});
 
 const fetchUrl = (inputValue) => {
     if (!inputValue) {
@@ -34,13 +41,20 @@ const fetchUrl = (inputValue) => {
                     warning.classList.remove("d-none");
                     sliderMakeSection.classList.add("d-none");
                 } else {
+                    
+                    imgAdd.textContent = "";
+                    sliderDiv.classList.add("d-none");
                     sliderMakeSection.classList.remove("d-none");
                     showImage(data.hits);
+                    img = [];
+                    
+                    
                 }
             });
         
         searchField.value = "";
-        imgAdd.textContent = "";
+        
+        
     }
     
 };
@@ -59,7 +73,7 @@ const showImage = (datas) => {
     })
 }
 
- const img = [];
+ 
 
 const clickImage = (data, e) => {
     e.target.parentNode.style.border = "2px solid red";
@@ -69,8 +83,40 @@ const clickImage = (data, e) => {
     } else {
         img.push(data);
     }
+    
 
    /*  fetch(data)
         .then(res => res.json())
         .then(datas => console.log(datas)) */
 }
+
+makeSliderButton.addEventListener('click', () => {
+    // console.log("clicck");
+    if (duration.value < 0) {
+        alert("Invalid Duration")
+    } else {
+         const durationValue = duration.value || 1000;
+        duration.value = "";
+        if (img.length > 2) {
+          imgAdd.textContent = "";
+          sliderDiv.classList.remove("d-none");
+          let sliderImgLength = 1;
+          sliderImg.src = img[0];
+           timer = setInterval(() => {
+            if (sliderImgLength !== img.length) {
+              sliderImg.src = img[sliderImgLength];
+              console.log(img[sliderImgLength]);
+              sliderImgLength++;
+            } else {
+              sliderImgLength = 0;
+            }
+          }, durationValue);
+        } else {
+          alert("Please select atleast two image");
+        }
+    }
+   
+    
+    
+     
+})
